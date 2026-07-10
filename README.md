@@ -1,10 +1,10 @@
 # LinkFork
 
-One smart link, every platform. Share a single URL (`/go`) and LinkFork redirects each visitor to the right destination based on their device — the App Store for Apple users, Google Play for Android users, and a fallback website for everyone else.
+One smart link, every platform. Share the site URL itself and LinkFork redirects each visitor to the right destination based on their device — the App Store for Apple users, Google Play for Android users, and a fallback website for everyone else. There is no landing page: every visit redirects immediately.
 
 ## How it works
 
-The route handler at [`app/go/route.ts`](app/go/route.ts) reads the visitor's `User-Agent` header on the server and issues a `307 Temporary Redirect`:
+The route handler at [`app/route.ts`](app/route.ts) reads the visitor's `User-Agent` header on the server and issues a `307 Temporary Redirect`. It handles the root URL (`/`), and `/go` is kept as an alias so either link works:
 
 | Device | Matched by | Destination |
 | --- | --- | --- |
@@ -42,23 +42,22 @@ Android is checked first, then Apple; anything that matches neither gets the fal
    pnpm dev
    ```
 
-   Open [http://localhost:3000](http://localhost:3000) for the landing page, or hit [http://localhost:3000/go](http://localhost:3000/go) directly.
+   Visit [http://localhost:3000](http://localhost:3000) — you'll be redirected straight to the destination for your device.
 
 ## Testing the redirects
 
 Your desktop browser will always be sent to `FALLBACK_URL` (or `APPLE_URL` on a Mac). To test the mobile paths, spoof the user agent with Chrome DevTools device emulation:
 
-1. Open [http://localhost:3000](http://localhost:3000) in Chrome.
-2. Open DevTools (`F12` or `Ctrl+Shift+I`) and click the **Toggle device toolbar** icon (`Ctrl+Shift+M`).
-3. In the device dropdown at the top of the viewport, pick **iPhone 14 Pro** (or any iPhone/iPad).
-4. Click **Try it** — you should land on your `APPLE_URL`.
-5. Go back, switch the device to **Pixel 7** (or any Android device), and click **Try it** again — you should land on your `ANDROID_URL`.
-6. Turn the device toolbar off and click **Try it** once more to confirm the fallback (on Windows/Linux).
+1. Open a new tab in Chrome, open DevTools (`F12` or `Ctrl+Shift+I`), and click the **Toggle device toolbar** icon (`Ctrl+Shift+M`).
+2. In the device dropdown at the top of the viewport, pick **iPhone 14 Pro** (or any iPhone/iPad).
+3. Navigate to [http://localhost:3000](http://localhost:3000) — you should land on your `APPLE_URL`.
+4. Switch the device to **Pixel 7** (or any Android device) and navigate to it again — you should land on your `ANDROID_URL`.
+5. Turn the device toolbar off and visit once more to confirm the fallback (on Windows/Linux).
 
-> Emulation only affects new requests, so always navigate again after switching devices. You can also test from a terminal:
+> Emulation only affects new requests, so always re-navigate after switching devices (use the address bar — the redirect will have taken you off the page). You can also test from a terminal:
 >
 > ```bash
-> curl -sI -A "Mozilla/5.0 (Linux; Android 14; Pixel 8)" http://localhost:3000/go | grep -i location
+> curl -sI -A "Mozilla/5.0 (Linux; Android 14; Pixel 8)" http://localhost:3000 | grep -i location
 > ```
 
 ## Deploying to Vercel
@@ -66,7 +65,7 @@ Your desktop browser will always be sent to `FALLBACK_URL` (or `APPLE_URL` on a 
 1. Push the repository to GitHub (or GitLab/Bitbucket).
 2. Go to [vercel.com/new](https://vercel.com/new), import the repository, and keep the default Next.js settings.
 3. Under **Environment Variables**, add `APPLE_URL`, `ANDROID_URL`, and `FALLBACK_URL` with your real destinations.
-4. Click **Deploy**. Your shareable link is `https://<your-project>.vercel.app/go`.
+4. Click **Deploy**. Your shareable link is `https://<your-project>.vercel.app` (or `/go` — both redirect).
 
 Alternatively, from the CLI:
 
