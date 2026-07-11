@@ -2,11 +2,11 @@ import { NextResponse } from "next/server";
 import { headers } from "next/headers";
 
 const APPLE_URL =
-  process.env.APPLE_URL ?? "https://apps.apple.com/your-app-link";
+  process.env.APPLE_URL ?? "https://apps.apple.com/ng/app/conzo-africa/id6761756197";
 const ANDROID_URL =
   process.env.ANDROID_URL ??
-  "https://play.google.com/store/apps/details?id=your.app";
-const FALLBACK_URL = process.env.FALLBACK_URL ?? "https://your-website.com";
+  "https://play.google.com/store/apps/details?id=com.conzo.app";
+const FALLBACK_URL = process.env.FALLBACK_URL ?? "https://www.conzo.africa/";
 
 function pickDestination(userAgent: string): string {
   if (/android/i.test(userAgent)) {
